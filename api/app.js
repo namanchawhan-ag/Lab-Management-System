@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import middleware from "./utils/middleware.js";
-import pool from "./db/db.js";
 import { dataRouter } from "./routes/data.route.js";
 
 const app = express();

@@ -17,7 +17,24 @@ const errorHandlerMiddleware = (err, req, res, next) => {
     message,
   });
 };
-const middleware = { errorHandlerMiddleware, firstMiddleware };
+
+const cleanEmptyArrays = (req, res, next) => {
+  if (req.body) {
+    const cleanBody = {};
+    
+    Object.keys(req.body).forEach(key => {
+      if (Array.isArray(req.body[key]) && req.body[key].length > 0) {
+        cleanBody[key] = req.body[key];
+      }
+    });
+
+    req.body = cleanBody;
+  }
+  
+  next();
+}; 
+
+const middleware = { errorHandlerMiddleware, firstMiddleware, cleanEmptyArrays };
 
 export default middleware;
 

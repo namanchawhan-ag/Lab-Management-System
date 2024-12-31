@@ -7,9 +7,10 @@ export const DropdownContainer = memo(function DropdownContainer({
   options, 
   isOpen, 
   onToggle,
-  dependencies,
   onSelectionChange,
-  selectedOptions
+  selectedOptions,
+  allSelectedValues,
+  setSelectedValues
 }) {
   return (
     <div 
@@ -22,9 +23,10 @@ export const DropdownContainer = memo(function DropdownContainer({
         options={options}
         isOpen={isOpen}
         onToggle={onToggle}
-        dependencies={dependencies}
         onSelectionChange={onSelectionChange}
         selectedOptions={selectedOptions}
+        allSelectedValues={allSelectedValues}
+        setSelectedValues={setSelectedValues}
       />
     </div>
   );
@@ -37,5 +39,7 @@ DropdownContainer.propTypes = {
   onToggle: PropTypes.func.isRequired,
   dependencies: PropTypes.object,
   onSelectionChange: PropTypes.func.isRequired,
-  selectedOptions: PropTypes.arrayOf(PropTypes.string).isRequired
+  selectedOptions: PropTypes.arrayOf(PropTypes.string).isRequired,
+  allSelectedValues: PropTypes.object.isRequired,
+  setSelectedValues: PropTypes.func.isRequired
 };

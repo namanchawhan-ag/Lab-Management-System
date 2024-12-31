@@ -9,9 +9,10 @@ const SelectDropdown = memo(function SelectDropdown({
   options, 
   isOpen, 
   onToggle,
-  dependencies,
   onSelectionChange,
-  selectedOptions
+  selectedOptions,
+  allSelectedValues,
+  setSelectedValues
 }) {
   const triggerRef = useRef(null);
   const searchInputRef = useRef(null);
@@ -19,12 +20,12 @@ const SelectDropdown = memo(function SelectDropdown({
 
   const {
     searchTerm,
-    filteredOptions,
     isAllSelected,
     toggleSelectAll,
     toggleOption,
-    handleSearchChange
-  } = useSelectDropdown(options, name, dependencies, selectedOptions, onSelectionChange);
+    handleSearchChange,
+    filteredOptions,
+  } = useSelectDropdown(options, name, selectedOptions, onSelectionChange, allSelectedValues, setSelectedValues);
 
   useEffect(() => {
     if (isOpen) {
@@ -61,7 +62,7 @@ const SelectDropdown = memo(function SelectDropdown({
         >
           <div className="w-full">
             <DropdownOptions
-              options={filteredOptions}
+              options={filteredOptions.length > 0 ? filteredOptions : options }
               selectedOptions={selectedOptions}
               onToggleOption={toggleOption}
               name={name}
@@ -88,7 +89,8 @@ SelectDropdown.propTypes = {
     mainFoodCategory: PropTypes.arrayOf(PropTypes.string)
   }),
   onSelectionChange: PropTypes.func.isRequired,
-  selectedOptions: PropTypes.arrayOf(PropTypes.string).isRequired
+  selectedOptions: PropTypes.arrayOf(PropTypes.string).isRequired,
+  allSelectedValues: PropTypes.object.isRequired
 };
 
 export default SelectDropdown;

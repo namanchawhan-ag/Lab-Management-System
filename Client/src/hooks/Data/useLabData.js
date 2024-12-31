@@ -1,34 +1,57 @@
 import { getLabData } from "@/services/labDataServices";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { getUniqueValues, getDropdowns, getGridItems } from "@/utils/dataUtils";
 
 export const useLabData = () => {
   const {
-    data: labData = [],
+    data,
     isLoading,
     isError,
     error,
   } = useQuery({
     queryKey: ["labData"],
-    queryFn: getLabData,
+    queryFn: () => getLabData(),
     onSuccess: (data) => {
       console.log(data);
-    },
+    }
   });
 
-  const uniqueValues = useMemo(() => getUniqueValues(labData), [labData]);
+  const dropdowns = useMemo(() => {
+    if (!data?.categories) return [];
+    
+    return [
+      {
+        name: "Lab Name",
+        options: data.categories.lab_names || []
+      },
+      {
+        name: "Main Food Category",
+        options: data.categories.food_categories || []
+      },
+      {
+        name: "Test Sub Category",
+        options: data.categories.test_categories || []
+      }
+    ];
+  }, [data]);
 
-  const dropdowns = useMemo(() => getDropdowns(uniqueValues), [uniqueValues]);
+  const gridItems = useMemo(() => {
+    if (!data) return [];
 
-  const gridItems = useMemo(() => getGridItems(uniqueValues, labData), [uniqueValues, labData]);
+    return [
+      { id: 1, name: "Total Labs", value: data.total_labs },
+      { id: 2, name: "Total Entries", value: data.total_entries },
+      { id: 3, name: "Food Categories", value: data.total_food_categories },
+      { id: 4, name: "Test Categories", value: data.total_test_categories }
+    ];
+  }, [data]);
 
   return {
-    labData,
+    data,
     isLoading,
     isError,
     error,
     dropdowns,
-    gridItems,
+    gridItems
   };
 };
