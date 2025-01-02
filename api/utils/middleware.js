@@ -30,7 +30,7 @@ const cleanEmptyArrays = (req, res, next) => {
 
     req.body = cleanBody;
   }
-  
+  console.log(req.body);
   next();
 }; 
 

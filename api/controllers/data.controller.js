@@ -49,34 +49,19 @@ export const getData = async (req, res) => {
 
 export const getDashboardStats = async (req, res) => {
   try {
-    const { lab_name, main_food_category, test_sub_category } = req.body;
-
-    const labNamesArray = lab_name || null;
-    const foodCategoriesArray = main_food_category || null;
-    const testCategoriesArray = test_sub_category || null;
-
     const queries = {
       totalCounts: `
         SELECT 
-          CASE 
-            WHEN $1::text[] IS NOT NULL THEN array_length($1::text[], 1)
-            ELSE COUNT(DISTINCT lab_name)
-          END as total_labs,
+          COUNT(DISTINCT lab_name) as total_labs,
           COUNT(*) as total_entries,
           COUNT(DISTINCT main_food_category) as total_food_categories,
           COUNT(DISTINCT test_sub_category) as total_test_categories
         FROM lab_data
-        WHERE ($1::text[] IS NULL OR lab_name = ANY($1))
-          AND ($2::text[] IS NULL OR main_food_category = ANY($2))
-          AND ($3::text[] IS NULL OR test_sub_category = ANY($3))
       `,
 
       labGrouped: `
         SELECT lab_name, COUNT(*) as entry_count
         FROM lab_data
-        WHERE ($1::text[] IS NULL OR lab_name = ANY($1))
-          AND ($2::text[] IS NULL OR main_food_category = ANY($2))
-          AND ($3::text[] IS NULL OR test_sub_category = ANY($3))
         GROUP BY lab_name
         ORDER BY lab_name
       `,
@@ -84,9 +69,6 @@ export const getDashboardStats = async (req, res) => {
       testGrouped: `
         SELECT test_sub_category, COUNT(*) as entry_count
         FROM lab_data
-        WHERE ($1::text[] IS NULL OR lab_name = ANY($1))
-          AND ($2::text[] IS NULL OR main_food_category = ANY($2))
-          AND ($3::text[] IS NULL OR test_sub_category = ANY($3))
         GROUP BY test_sub_category
         ORDER BY test_sub_category
       `,
@@ -97,63 +79,26 @@ export const getDashboardStats = async (req, res) => {
           main_food_category,
           COUNT(*) as entry_count
         FROM lab_data
-        WHERE ($1::text[] IS NULL OR lab_name = ANY($1))
-          AND ($2::text[] IS NULL OR main_food_category = ANY($2))
-          AND ($3::text[] IS NULL OR test_sub_category = ANY($3))
         GROUP BY lab_name, main_food_category
         ORDER BY lab_name, main_food_category
       `,
 
       uniqueCategories: `
-        WITH filtered_labs AS (
-          SELECT DISTINCT lab_name
-          FROM lab_data
-          WHERE ($1::text[] IS NULL OR lab_name = ANY($1))
-            AND ($2::text[] IS NULL OR main_food_category = ANY($2))
-            AND ($3::text[] IS NULL OR test_sub_category = ANY($3))
-        )
         SELECT 
-          (SELECT ARRAY_AGG(DISTINCT lab_name) FROM lab_data) as lab_names,
-          (
-            SELECT ARRAY_AGG(DISTINCT main_food_category) 
-            FROM lab_data 
-            WHERE lab_name IN (SELECT lab_name FROM filtered_labs)
-          ) as food_categories,
-          (
-            SELECT ARRAY_AGG(DISTINCT test_sub_category) 
-            FROM lab_data 
-            WHERE lab_name IN (SELECT lab_name FROM filtered_labs)
-          ) as test_categories
+          ARRAY_AGG(DISTINCT lab_name) AS lab_names,
+          ARRAY_AGG(DISTINCT main_food_category) AS food_categories,
+          ARRAY_AGG(DISTINCT test_sub_category) AS test_categories
+        FROM lab_data
       `,
     };
 
     const [totalCounts, labGrouped, testGrouped, crossTab, uniqueCategories] =
       await Promise.all([
-        pool.query(queries.totalCounts, [
-          labNamesArray,
-          foodCategoriesArray,
-          testCategoriesArray,
-        ]),
-        pool.query(queries.labGrouped, [
-          labNamesArray,
-          foodCategoriesArray,
-          testCategoriesArray,
-        ]),
-        pool.query(queries.testGrouped, [
-          labNamesArray,
-          foodCategoriesArray,
-          testCategoriesArray,
-        ]),
-        pool.query(queries.crossTab, [
-          labNamesArray,
-          foodCategoriesArray,
-          testCategoriesArray,
-        ]),
-        pool.query(queries.uniqueCategories, [
-          labNamesArray,
-          foodCategoriesArray,
-          testCategoriesArray,
-        ]),
+        pool.query(queries.totalCounts),
+        pool.query(queries.labGrouped),
+        pool.query(queries.testGrouped),
+        pool.query(queries.crossTab),
+        pool.query(queries.uniqueCategories),
       ]);
 
     const crossTabMatrix = crossTab.rows.reduce((acc, row) => {
@@ -188,32 +133,48 @@ export const postDashboardStats = async (req, res) => {
   try {
     const { lab_name, main_food_category, test_sub_category } = req.body;
 
-    const labNamesArray = lab_name || null;
-    const foodCategoriesArray = main_food_category || null;
-    const testCategoriesArray = test_sub_category || null;
+    const whereConditions = [];
+    const queryParams = [];
+    let paramCounter = 1;
+
+    if (Array.isArray(lab_name) && lab_name.length > 0) {
+      whereConditions.push(`lab_name = ANY($${paramCounter})`);
+      queryParams.push(lab_name);
+      paramCounter++;
+    }
+
+    if (Array.isArray(main_food_category) && main_food_category.length > 0) {
+      whereConditions.push(`main_food_category = ANY($${paramCounter})`);
+      queryParams.push(main_food_category);
+      paramCounter++;
+    }
+
+    if (Array.isArray(test_sub_category) && test_sub_category.length > 0) {
+      whereConditions.push(`test_sub_category = ANY($${paramCounter})`);
+      queryParams.push(test_sub_category);
+      paramCounter++;
+    }
+
+    const whereClause =
+      whereConditions.length > 0
+        ? `WHERE ${whereConditions.join(" AND ")}`
+        : "";
 
     const queries = {
       totalCounts: `
         SELECT 
-          CASE 
-            WHEN $1::text[] IS NOT NULL THEN array_length($1::text[], 1)
-            ELSE COUNT(DISTINCT lab_name)
-          END as total_labs,
+          COUNT(DISTINCT lab_name) as total_labs,
           COUNT(*) as total_entries,
           COUNT(DISTINCT main_food_category) as total_food_categories,
           COUNT(DISTINCT test_sub_category) as total_test_categories
         FROM lab_data
-        WHERE ($1::text[] IS NULL OR lab_name = ANY($1))
-          AND ($2::text[] IS NULL OR main_food_category = ANY($2))
-          AND ($3::text[] IS NULL OR test_sub_category = ANY($3))
+        ${whereClause}
       `,
 
       labGrouped: `
         SELECT lab_name, COUNT(*) as entry_count
         FROM lab_data
-        WHERE ($1::text[] IS NULL OR lab_name = ANY($1))
-          AND ($2::text[] IS NULL OR main_food_category = ANY($2))
-          AND ($3::text[] IS NULL OR test_sub_category = ANY($3))
+        ${whereClause}
         GROUP BY lab_name
         ORDER BY lab_name
       `,
@@ -221,9 +182,7 @@ export const postDashboardStats = async (req, res) => {
       testGrouped: `
         SELECT test_sub_category, COUNT(*) as entry_count
         FROM lab_data
-        WHERE ($1::text[] IS NULL OR lab_name = ANY($1))
-          AND ($2::text[] IS NULL OR main_food_category = ANY($2))
-          AND ($3::text[] IS NULL OR test_sub_category = ANY($3))
+        ${whereClause}
         GROUP BY test_sub_category
         ORDER BY test_sub_category
       `,
@@ -234,9 +193,7 @@ export const postDashboardStats = async (req, res) => {
           main_food_category,
           COUNT(*) as entry_count
         FROM lab_data
-        WHERE ($1::text[] IS NULL OR lab_name = ANY($1))
-          AND ($2::text[] IS NULL OR main_food_category = ANY($2))
-          AND ($3::text[] IS NULL OR test_sub_category = ANY($3))
+        ${whereClause}
         GROUP BY lab_name, main_food_category
         ORDER BY lab_name, main_food_category
       `,
@@ -245,9 +202,7 @@ export const postDashboardStats = async (req, res) => {
         WITH filtered_labs AS (
           SELECT DISTINCT lab_name
           FROM lab_data
-          WHERE ($1::text[] IS NULL OR lab_name = ANY($1))
-            AND ($2::text[] IS NULL OR main_food_category = ANY($2))
-            AND ($3::text[] IS NULL OR test_sub_category = ANY($3))
+          ${whereClause}
         )
         SELECT 
           (SELECT ARRAY_AGG(DISTINCT lab_name) FROM lab_data) as lab_names,
@@ -266,31 +221,11 @@ export const postDashboardStats = async (req, res) => {
 
     const [totalCounts, labGrouped, testGrouped, crossTab, uniqueCategories] =
       await Promise.all([
-        pool.query(queries.totalCounts, [
-          labNamesArray,
-          foodCategoriesArray,
-          testCategoriesArray,
-        ]),
-        pool.query(queries.labGrouped, [
-          labNamesArray,
-          foodCategoriesArray,
-          testCategoriesArray,
-        ]),
-        pool.query(queries.testGrouped, [
-          labNamesArray,
-          foodCategoriesArray,
-          testCategoriesArray,
-        ]),
-        pool.query(queries.crossTab, [
-          labNamesArray,
-          foodCategoriesArray,
-          testCategoriesArray,
-        ]),
-        pool.query(queries.uniqueCategories, [
-          labNamesArray,
-          foodCategoriesArray,
-          testCategoriesArray,
-        ]),
+        pool.query(queries.totalCounts, queryParams),
+        pool.query(queries.labGrouped, queryParams),
+        pool.query(queries.testGrouped, queryParams),
+        pool.query(queries.crossTab, queryParams),
+        pool.query(queries.uniqueCategories, queryParams),
       ]);
 
     const crossTabMatrix = crossTab.rows.reduce((acc, row) => {

@@ -45,7 +45,7 @@ export const useLabData = () => {
       { id: 4, name: "Test Categories", value: data.total_test_categories }
     ];
   }, [data]);
-
+  
   return {
     data,
     isLoading,

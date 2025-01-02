@@ -55,7 +55,7 @@ const SelectDropdown = memo(function SelectDropdown({
 
       {isOpen && (
         <div
-          className="absolute bg-white shadow-md rounded-md mt-1 z-50 max-h-96 overflow-hidden border bg-popover text-popover-foreground whitespace-nowrap"
+          className="absolute bg-white shadow-md rounded-md mt-1 z-50 max-h-96 overflow-hidden border bg-popover text-popover-foreground whitespace-nowrap "
           style={{ minWidth: dropdownWidth }}
           role="listbox"
           id="dropdown-list"
