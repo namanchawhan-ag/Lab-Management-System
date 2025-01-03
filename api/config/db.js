@@ -1,17 +1,9 @@
-import config from "../utils/config.js";
 import pkg from "pg";
+import poolConfig from "./pool.config.js";
+
 const { Pool } = pkg;
 
-const pool = new Pool({
-  host: config.HOST,
-  user: config.USER,
-  port: config.DB_PORT,
-  password: config.PASSWORD,
-  database: config.DATABASE,
-  max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
-});
+const pool = new Pool(poolConfig);
 
 const testConnection = async () => {
   try {
@@ -20,21 +12,21 @@ const testConnection = async () => {
     client.release();
   } catch (err) {
     console.error('Error testing database connection:', {
-      host: config.HOST,
-      user: config.USER,
-      port: config.DB_PORT,
-      database: config.DATABASE,
+      host: poolConfig.host,
+      user: poolConfig.user,
+      port: poolConfig.port,
+      database: poolConfig.database,
       error: err.message
     });
     process.exit(1);
   }
 };
 
-testConnection();
-
 pool.on('error', (err) => {
   console.error('Unexpected error on idle client', err);
   process.exit(-1);
 });
+
+testConnection();
 
 export default pool;
