@@ -1,9 +1,9 @@
 import { useCallback, useState } from "react";
-import { DropdownContainer } from "@/my_components/DropdownContainer/DropdownContainer";
 import { useDropdownManager } from "@/hooks/Dropdown/useDropdownManager";
-import GridContainer from "@/my_components/GridContainer/GridContainer";
 import { useLabData } from "@/hooks/Data/useLabData";
 import { Skeleton } from "@/components/ui/skeleton";
+import GridContainer from "@/my_components/GridContainer/GridContainer";
+import { DropdownContainer } from "@/my_components/DropdownContainer/DropdownContainer";
 import BarChartCard from "@/my_components/BarChartCard/BarChartCard";
 import { TableCard } from "@/my_components/TableCard/TableCard";
 
@@ -14,7 +14,7 @@ function Home() {
     "Main Food Category": [],
     "Test Sub Category": [],
   });
-
+  
   const { isLoading, isError, error, dropdowns, gridItems, data } =
     useLabData(selectedValues);
 
@@ -25,10 +25,8 @@ function Home() {
     }));
   }, []);
 
-  // Show loading only for the affected parts of the UI
   const renderContent = () => {
     if (isError) return <div>Error: {error.message}</div>;
-
     return (
       <>
         <div className="grid grid-cols-4 gap-4">
@@ -56,6 +54,14 @@ function Home() {
               <BarChartCard entries={data.labGroupedEntries} lab={true} />
               <BarChartCard entries={data.testGroupedEntries} />
               <div className="rounded-xl border bg-card text-card-foreground shadow p-4">
+                <div className="p-2 space-y-1.5 flex flex-col mb-4">
+                  <div className="font-semibold leading-none tracking-tight">
+                    Lab Table
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Main Food Categories
+                  </div>
+                </div>
                 <TableCard entries={data.crossTabMatrix} />
               </div>
             </div>

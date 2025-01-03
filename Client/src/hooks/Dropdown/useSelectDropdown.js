@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from "react";
-import { postLabData } from "@/services/labDataServices";
+import { postLabData } from "@/services/data.service.js";
 import { useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 
 export function useSelectDropdown(
   options,
@@ -10,6 +11,7 @@ export function useSelectDropdown(
   allSelectedValues,
   setSelectedValues
 ) {
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const queryClient = useQueryClient();
 
@@ -48,7 +50,7 @@ export function useSelectDropdown(
 
     try {
       const data = await postLabData(requestBody);
-      if (data.categories.lab_names == null) {
+      if (data.total_labs == "0") {
         queryClient.invalidateQueries(["labData"]);
         setSelectedValues({
           "Lab Name": [],
@@ -56,8 +58,11 @@ export function useSelectDropdown(
           "Test Sub Category": [],
         });
 
-        // TODO: Add a toast message ( SHADCN UI )
-        alert("No data found");
+        toast({
+          variant: "destructive",
+          title: "No data found!!",
+          description: "There are no labs with the selected filters",
+        })
       } else {
         queryClient.setQueryData(["labData"], data);
         onSelectionChange(newSelection);
@@ -85,7 +90,7 @@ export function useSelectDropdown(
 
       try {
         const data = await postLabData(requestBody);
-        if (data.categories.lab_names == null) {
+        if (data.total_labs == "0") {
           queryClient.invalidateQueries(["labData"]);
           setSelectedValues({
             "Lab Name": [],
@@ -93,8 +98,11 @@ export function useSelectDropdown(
             "Test Sub Category": [],
           });
 
-          // TODO: Add a toast message ( SHADCN UI )
-          alert("No data found");
+          toast({
+            variant: "destructive",
+            title: "No data found!!",
+            description: "There are no labs with the selected filters",
+          })
         } else {
           queryClient.setQueryData(["labData"], data);
           onSelectionChange(newSelection);
@@ -108,8 +116,8 @@ export function useSelectDropdown(
 
   const filteredOptions = useMemo(() => {
     if (!searchTerm) return options;
-    
-    return options.filter(option => 
+
+    return options.filter((option) =>
       option.toLowerCase().includes(searchTerm.toLowerCase().trim())
     );
   }, [options, searchTerm]);
@@ -117,7 +125,6 @@ export function useSelectDropdown(
   const handleSearchChange = useCallback((e) => {
     setSearchTerm(e.target.value);
   }, []);
-  
 
   return {
     searchTerm,

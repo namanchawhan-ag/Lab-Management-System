@@ -6,10 +6,12 @@ import { ErrorFallback } from "./utils/ErrorFallback";
 import { ErrorBoundary } from "react-error-boundary";
 import { StrictMode } from "react";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { Toaster } from "./components/ui/toaster";
 
 function AppContent() {
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <Toaster />
       <Navbar />
       <main className="py-4 px-4 md:px-12 lg:px-20">
         <Home />

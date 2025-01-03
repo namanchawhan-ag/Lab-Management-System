@@ -3,11 +3,11 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const config = {
-  HOST: process.env.HOST || 'localhost',
-  USER: process.env.USER || 'postgres',
-  PASSWORD: process.env.PASSWORD,
-  DATABASE: process.env.DATABASE || 'postgres',
-  DB_PORT: parseInt(process.env.DB_PORT || '5432'),
+  POSTGRES_HOST: process.env.POSTGRES_HOST || 'localhost',
+  POSTGRES_USER: process.env.POSTGRES_USER || 'postgres',
+  POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD,
+  POSTGRES_DATABASE: process.env.POSTGRES_DATABASE || 'postgres',
+  POSTGRES_DB_PORT: parseInt(process.env.POSTGRES_DB_PORT || '5432'),
   PORT: parseInt(process.env.PORT || '3001')
 };
 

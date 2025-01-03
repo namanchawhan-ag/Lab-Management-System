@@ -1,4 +1,6 @@
+import { useMemo } from "react";
 import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts";
+import PropTypes from "prop-types";
 import {
   Card,
   CardContent,
@@ -13,43 +15,43 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
+const COLORS = [
+  "#FF6B6B",
+  "#4ECDC4",
+  "#45B7D1",
+  "#96CEB4",
+  "#FFEEAD",
+  "#D4A5A5",
+];
+
 const BarChartCard = ({ entries, lab = false }) => {
-  const colors = [
-    "#FF6B6B",
-    "#4ECDC4",
-    "#45B7D1",
-    "#96CEB4",
-    "#FFEEAD",
-    "#D4A5A5",
-  ];
+  const chartData = useMemo(() => {
+    return entries.map((entry, index) => ({
+      lab: lab ? entry.lab_name : entry.test_sub_category,
+      count: parseInt(entry.entry_count, 10),
+      color: COLORS[index % COLORS.length],
+    }));
+  }, [entries, lab]);
 
-  const chartData = lab ? entries.map(({ lab_name, entry_count }, index) => ({
-    lab: lab_name,
-    count: parseInt(entry_count, 10),
-    color: colors[index % colors.length],
-  })) : entries.map(({ test_sub_category, entry_count }, index) => ({
-    lab: test_sub_category,
-    count: parseInt(entry_count, 10),
-    color: colors[index % colors.length],
-  }));
-
-  const generateConfig = (data) => {
-    const config = {};
-    data.forEach((entry, index) => {
-      const key = `lab${index}`;
-      config[key] = {
-        color: colors[index % colors.length],
+  const config = useMemo(() => {
+    return entries.reduce((acc, _, index) => {
+      acc[`lab${index}`] = {
+        color: COLORS[index % COLORS.length],
       };
-    });
-    return config;
-  };
+      return acc;
+    }, {});
+  }, [entries]);
 
-  const config = generateConfig(entries);
+  if (!entries?.length) {
+    return <div>No data available</div>;
+  }
 
   return (
-    <Card className="border ">
+    <Card className="border">
       <CardHeader>
-        <CardTitle>{lab ? "Lab Entry Chart" : "Sub Category Entry Chart"}</CardTitle>
+        <CardTitle>
+          {lab ? "Lab Entry Chart" : "Sub Category Entry Chart"}
+        </CardTitle>
         <CardDescription>Parameter Accredited for Testing</CardDescription>
       </CardHeader>
       <CardContent className="!max-h-[300px]">
@@ -78,8 +80,8 @@ const BarChartCard = ({ entries, lab = false }) => {
             <Bar dataKey="count" fill="" radius={8}>
               {chartData.map((entry, index) => (
                 <Cell
-                  key={`cell-${index}`}
-                  fill={colors[index % colors.length]}
+                  key={`cell-${entry.lab}-${index}`}
+                  fill={entry.color}
                 />
               ))}
             </Bar>
@@ -87,26 +89,32 @@ const BarChartCard = ({ entries, lab = false }) => {
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm mt-4">
-        {lab ? entries.map((entry, index) => (
-          <div key={entry.lab_name} className="flex items-center gap-2">
+        {entries.map((entry, index) => (
+          <div 
+            key={lab ? entry.lab_name : entry.test_sub_category} 
+            className="flex items-center gap-2"
+          >
             <div
               className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: colors[index % colors.length] }}
+              style={{ backgroundColor: COLORS[index % COLORS.length] }}
             />
-            <span>{entry.lab_name}</span>
-          </div>
-        )) : entries.map((entry, index) => (
-          <div key={entry.test_sub_category} className="flex items-center gap-2">
-            <div
-              className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: colors[index % colors.length] }}
-            />
-            <span>{entry.test_sub_category}</span>
+            <span>{lab ? entry.lab_name : entry.test_sub_category}</span>
           </div>
         ))}
       </CardFooter>
     </Card>
   );
+};
+
+BarChartCard.propTypes = {
+  entries: PropTypes.arrayOf(
+    PropTypes.shape({
+      lab_name: PropTypes.string,
+      test_sub_category: PropTypes.string,
+      entry_count: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    })
+  ).isRequired,
+  lab: PropTypes.bool,
 };
 
 export default BarChartCard;

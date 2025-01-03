@@ -1,4 +1,4 @@
-import { getLabData } from "@/services/labDataServices";
+import { getLabData } from "@/services/data.service.js";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
