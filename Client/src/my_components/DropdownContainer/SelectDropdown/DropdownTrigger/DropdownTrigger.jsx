@@ -4,7 +4,7 @@ export function DropdownTrigger({ name, selectedCount, onClick, isOpen, triggerR
   return (
     <button
       ref={triggerRef}
-      className="flex h-9 w-full items-center justify-between whitespace-nowrap rounded-lg border bg-transparent px-3 hover:bg-slate-100 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring hover:bg-muted"
+      className="flex h-9 w-full items-center justify-between whitespace-nowrap rounded-lg border bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-card focus:ring-offset-2 hover:bg-secondary"
       onClick={onClick}
       aria-expanded={isOpen}
       aria-haspopup="listbox"
@@ -12,8 +12,8 @@ export function DropdownTrigger({ name, selectedCount, onClick, isOpen, triggerR
     >
       <span className='font-medium'>{name}</span>
       {selectedCount > 0 && (
-        <span className="ml-2 text-xs text-gray-500">
-          ({selectedCount})
+        <span className="ml-2 text-xs text-muted-foreground">
+          {selectedCount}
         </span>
       )}
     </button>

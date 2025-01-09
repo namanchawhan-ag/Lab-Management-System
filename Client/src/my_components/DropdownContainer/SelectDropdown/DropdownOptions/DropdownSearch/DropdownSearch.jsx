@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 export function DropdownSearch({ searchTerm, onSearchChange, searchInputRef }) {
   return (
-    <div className=" flex items-center justify-start px-4 border-t border-b gap-2">
+    <div className=" flex items-center justify-start px-4 border-t border-b border-border gap-2">
       <IoIosSearch size={20} aria-hidden="true" />
       <input
         ref={searchInputRef}

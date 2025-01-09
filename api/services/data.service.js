@@ -4,13 +4,15 @@ import { errorHandler } from "../utils/error.js";
 export const dataService = {
   insertData: async (data) => {
     try {
-      const { lab_name, main_food_category, test_sub_category } = data;
+      console.log(data);
       
-      if (!lab_name || !main_food_category || !test_sub_category) {
-        throw errorHandler(400, "Missing required fields");
-      }
+      const { lab_name, main_food_category, parameter, limit_standard_specification, range_of_testing } = data;
+      
+      // if (!lab_name) {
+      //   throw errorHandler(400, "Missing required fields");
+      // }
 
-      return await dataDb.insert(lab_name, main_food_category, test_sub_category);
+      return await dataDb.insert(lab_name, main_food_category, parameter, limit_standard_specification, range_of_testing);
     } catch (error) {
       throw errorHandler(error.statusCode || 500, error.message);
     }

@@ -42,7 +42,6 @@ const SelectDropdown = memo(function SelectDropdown({
     e.stopPropagation();
     onToggle();
   }, [onToggle]);
-
   return (
     <div className="relative">
       <DropdownTrigger
@@ -55,8 +54,8 @@ const SelectDropdown = memo(function SelectDropdown({
 
       {isOpen && (
         <div
-          className="absolute bg-white shadow-md rounded-md mt-1 z-50 max-h-96 overflow-hidden border bg-popover text-popover-foreground whitespace-nowrap "
-          style={{ minWidth: dropdownWidth }}
+          className="absolute bg-card shadow rounded-md mt-1 z-50 max-h-96 overflow-hidden text-card-foreground whitespace-nowrap max-w-screen-sm"
+          style={{ maxWidth: dropdownWidth, minWidth: dropdownWidth }}
           role="listbox"
           id="dropdown-list"
         >

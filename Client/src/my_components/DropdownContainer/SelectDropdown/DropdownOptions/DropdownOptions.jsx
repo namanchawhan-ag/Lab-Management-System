@@ -16,10 +16,9 @@ export function DropdownOptions({
     e.stopPropagation();
     onToggleOption(option);
   };
-
   return (
     <>
-      <div className="flex justify-between relative items-center rounded-sm py-2.5 px-4 text-sm bg-slate-100">
+      <div className="flex justify-between relative items-center py-2.5 px-4 text-sm bg-secondary">
         <span>{name}</span>
         <label className="flex items-center space-x-2">
           <input
@@ -42,21 +41,20 @@ export function DropdownOptions({
 
       <div className="overflow-auto max-h-[200px]">
         {options.length === 0 ? (
-          <div className="py-2 px-4 text-sm text-gray-500">
+          <div className="py-2 px-4 text-sm text-muted-foreground">
             No options found
           </div>
         ) : (
           options.map((option) => (
             <div
               key={option}
-              className={`flex gap-2 relative cursor-pointer select-none items-center justify-between rounded-sm py-3 px-4 text-sm hover:bg-slate-50 ${
-                selectedOptions.includes(option) ? "bg-slate-100" : ""
+              className={`flex gap-4 relative cursor-pointer select-none items-center justify-start  py-3 px-4 text-sm hover:bg-secondary ${
+                selectedOptions.includes(option) ? "bg-secondary" : ""
               }`}
               onClick={(e) => handleClick(e, option)}
               role="option"
               aria-selected={selectedOptions.includes(option)}
             >
-              <span>{option}</span>
               <input
                 type="checkbox"
                 checked={selectedOptions.includes(option)}
@@ -65,6 +63,7 @@ export function DropdownOptions({
                 aria-label={`Select ${option}`}
                 onClick={(e) => e.stopPropagation()}
               />
+              <span>{option}</span>
             </div>
           ))
         )}

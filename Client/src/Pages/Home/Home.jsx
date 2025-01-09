@@ -14,7 +14,7 @@ function Home() {
     "Main Food Category": [],
     "Test Sub Category": [],
   });
-  
+
   const { isLoading, isError, error, dropdowns, gridItems, data } =
     useLabData(selectedValues);
 
@@ -52,8 +52,10 @@ function Home() {
           data && (
             <div className="mt-2 flex flex-col gap-4">
               <BarChartCard entries={data.labGroupedEntries} lab={true} />
-              <BarChartCard entries={data.testGroupedEntries} />
-              <div className="rounded-xl border bg-card text-card-foreground shadow p-4">
+              {data.total_test_categories != "0" && (
+                <BarChartCard entries={data.testGroupedEntries} />
+              )}
+              <div className="rounded-xl border text-card-foreground shadow p-4">
                 <div className="p-2 space-y-1.5 flex flex-col mb-4">
                   <div className="font-semibold leading-none tracking-tight">
                     Lab Table

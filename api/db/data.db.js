@@ -1,16 +1,18 @@
 import pool from "../config/db.js";
 
 export const dataDb = {
-  insert: async (lab_name, main_food_category, test_sub_category) => {
+  insert: async (lab_name, main_food_category, parameter, limit_standard_specification, range_of_testing) => {
+    const custom_lab_name = "NFL Ghaziabad"
     const insertQuery = `
-      INSERT INTO lab_data (lab_name, main_food_category, test_sub_category) 
-      VALUES ($1, $2, $3) 
+      INSERT INTO lab_data (lab_name, main_food_category, parameter, limit_standard_specification, range_of_testing) 
+      VALUES ($1, $2, $3, $4, $5) 
       RETURNING *`;
-    
     const result = await pool.query(insertQuery, [
-      lab_name,
+      custom_lab_name,
       main_food_category,
-      test_sub_category,
+      parameter,
+      limit_standard_specification,
+      range_of_testing
     ]);
     return result.rows[0];
   },

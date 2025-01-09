@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from "recharts";
 import PropTypes from "prop-types";
 import {
   Card,
@@ -15,54 +15,47 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-const COLORS = [
-  "#FF6B6B",
-  "#4ECDC4",
-  "#45B7D1",
-  "#96CEB4",
-  "#FFEEAD",
-  "#D4A5A5",
-];
-
 const BarChartCard = ({ entries, lab = false }) => {
   const chartData = useMemo(() => {
-    return entries.map((entry, index) => ({
+    return entries.map((entry) => ({
       lab: lab ? entry.lab_name : entry.test_sub_category,
       count: parseInt(entry.entry_count, 10),
-      color: COLORS[index % COLORS.length],
     }));
   }, [entries, lab]);
 
-  const config = useMemo(() => {
-    return entries.reduce((acc, _, index) => {
-      acc[`lab${index}`] = {
-        color: COLORS[index % COLORS.length],
-      };
-      return acc;
-    }, {});
-  }, [entries]);
+  const chartConfig = {
+    desktop: {
+      label: "Desktop",
+      color: "hsl(var(--chart-1))",
+    },
+  }
 
   if (!entries?.length) {
     return <div>No data available</div>;
   }
-
   return (
-    <Card className="border">
+    <Card className="border border-border">
       <CardHeader>
         <CardTitle>
           {lab ? "Lab Entry Chart" : "Sub Category Entry Chart"}
         </CardTitle>
         <CardDescription>Parameter Accredited for Testing</CardDescription>
       </CardHeader>
-      <CardContent className="!max-h-[300px]">
-        <ChartContainer config={config} className="!max-h-[300px]">
+      <CardContent className="">
+        <ChartContainer
+          className="min-h-[200px]"
+          entriesAmt={chartData.length}
+          config={chartConfig}
+        >
           <BarChart
-            width={50}
-            height={50}
+            accessibilityLayer
             data={chartData}
-            className="!max-h-[300px]"
+            margin={{
+              top: 20,
+              bottom: 20,
+            }}
           >
-            <CartesianGrid vertical={false} strokeDasharray="3 3" />
+            <CartesianGrid vertical={false} />
             <XAxis
               dataKey="lab"
               tickLine={false}
@@ -75,33 +68,21 @@ const BarChartCard = ({ entries, lab = false }) => {
             <YAxis />
             <ChartTooltip
               cursor={{ fill: "rgba(0, 0, 0, 0.1)" }}
-              content={<ChartTooltipContent hideLabel />}
+              content={<ChartTooltipContent />}
             />
-            <Bar dataKey="count" fill="" radius={8}>
+            <Bar dataKey="count" fill="var(--color-foreground)" radius={8}>
               {chartData.map((entry, index) => (
-                <Cell
-                  key={`cell-${entry.lab}-${index}`}
-                  fill={entry.color}
+                <LabelList
+                  key={`label-${entry.lab}-${index}`}
+                  position="top"
+                  offset={12}
+                  fontSize={12}
                 />
               ))}
             </Bar>
           </BarChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm mt-4">
-        {entries.map((entry, index) => (
-          <div 
-            key={lab ? entry.lab_name : entry.test_sub_category} 
-            className="flex items-center gap-2"
-          >
-            <div
-              className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: COLORS[index % COLORS.length] }}
-            />
-            <span>{lab ? entry.lab_name : entry.test_sub_category}</span>
-          </div>
-        ))}
-      </CardFooter>
     </Card>
   );
 };
