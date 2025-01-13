@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 
 export function DropdownTrigger({ name, selectedCount, onClick, isOpen, triggerRef }) {
+  console.log("DropdownTrigger");
+
   return (
     <button
       ref={triggerRef}

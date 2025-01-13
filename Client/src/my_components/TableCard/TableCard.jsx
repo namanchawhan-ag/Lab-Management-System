@@ -17,18 +17,13 @@ import {
 import PropTypes from "prop-types";
 
 export function TableCard({ entries }) {
-  const uniqueCategories = useMemo(
-    () =>
-      [
-        ...new Set(Object.values(entries).flatMap((lab) => Object.keys(lab))),
-      ].sort(),
-    [entries]
-  );
-
-  const labEntries = useMemo(
-    () => Object.entries(entries).sort(([a], [b]) => a.localeCompare(b)),
-    [entries]
-  );
+  const uniqueCategories = [
+    ...new Set(
+      entries.flatMap((entry) =>
+        entry.main_food_category.map((food) => food.category)
+      )
+    ),
+  ];
 
   if (!entries || Object.keys(entries).length === 0) {
     return <div>No data available</div>;
@@ -44,7 +39,7 @@ export function TableCard({ entries }) {
                 <TooltipProvider delayDuration={200}>
                   <Tooltip>
                     <TooltipTrigger className="">
-                      {category.slice(0, 15)}...
+                      {category?.slice(0, 15)}...
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>{category}</p>
@@ -55,23 +50,29 @@ export function TableCard({ entries }) {
             ))}
           </TableRow>
         </TableHeader>
-        <TableBody >
-          {labEntries.map(([labName, categories]) => (
-            <TableRow key={labName}>
-              <TableCell className="font-medium w-[250px]">{labName}</TableCell>
-              {uniqueCategories.map((category) => (
-                <TableCell
-                  key={`${labName}-${category}`}
-                  className="bg-muted mx-1 rounded hover:cursor-pointer hover:bg-card hover:text-card-foreground w-[142px]"
-                >
-                  <span className="text-muted-foreground ml-1">
-                    {categories[category] || "-"}
-                  </span>
-                </TableCell>
-              ))}
+        <TableBody>
+          {entries.map((entry) => (
+            <TableRow key={entry.lab_name}>
+              <TableCell className="font-medium w-[250px]">
+                {entry.lab_name}
+              </TableCell>
+              {uniqueCategories.map((category) => {
+                const foundCategory = entry.main_food_category.find(
+                  (food) => food.category === category
+                );
+                return (
+                  <TableCell
+                    key={`${entry.lab_name}-${category}`}
+                    className="bg-muted mx-1 rounded hover:cursor-pointer hover:bg-card hover:text-card-foreground w-[142px]"
+                  >
+                    <span className="text-muted-foreground ml-1">
+                      {foundCategory ? foundCategory.entry_count : "-"}
+                    </span>
+                  </TableCell>
+                );
+              })}
             </TableRow>
           ))}
-          <TableCaption></TableCaption>
         </TableBody>
       </Table>
     </div>
@@ -79,5 +80,5 @@ export function TableCard({ entries }) {
 }
 
 TableCard.propTypes = {
-  entries: PropTypes.object.isRequired,
+  entries: PropTypes.array.isRequired,
 };

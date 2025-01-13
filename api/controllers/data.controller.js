@@ -3,12 +3,15 @@ import { dataService } from "../services/data.service.js";
 
 export const ParseData = async (req, res) => {
   const processedData = processData();
+  const batchSize = 100;
 
-  for (const data of processedData) {
-    await dataService.insertData(data);
+  for (let i = 0; i < processedData.length; i += batchSize) {
+    const batch = processedData.slice(i, i + batchSize);
+    await dataService.insertDataBatch(batch);
   }
+
   res.status(201).json({
-    processedData,
+    totalInserted: processedData.length,
   });
 };
 
@@ -22,17 +25,9 @@ function processData() {
   const jsonData = xlsx.utils.sheet_to_json(sheet);
 
   const processedData = jsonData.map((row) => ({
-    lab_name: row["Discipline / Group"],
-    main_food_category: row["Materials or Products tested"],
-    parameter:
-      row[
-        "Component, parameter or charcteristic tested / Specific Test Performed / Tests or type of tests Performed"
-      ],
-    limit_standard_specification:
-      row[
-        "Test Method Specification against which tests are performed and / or the techiques / equipment used"
-      ],
-    range_of_testing: row["Range of Testing / Limits of Detection"],
+    lab_name: row["Lab Name"],
+    main_food_category: row["Main Food Category"],
+    test_sub_category: row["Test Sub category"],
   }));
 
   return processedData;
@@ -40,6 +35,7 @@ function processData() {
 
 export const insertData = async (req, res) => {
   const data = await dataService.insertData(req.body);
+
   res.status(201).json({
     message: "Data inserted successfully",
     data,

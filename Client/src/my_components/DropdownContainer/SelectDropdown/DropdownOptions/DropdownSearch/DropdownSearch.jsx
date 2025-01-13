@@ -2,6 +2,8 @@ import { IoIosSearch } from "react-icons/io";
 import PropTypes from 'prop-types';
 
 export function DropdownSearch({ searchTerm, onSearchChange, searchInputRef }) {
+  console.log("DropdownSearch");
+
   return (
     <div className=" flex items-center justify-start px-4 border-t border-b border-border gap-2">
       <IoIosSearch size={20} aria-hidden="true" />

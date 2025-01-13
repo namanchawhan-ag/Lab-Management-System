@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import { DropdownSearch } from "./DropdownSearch/DropdownSearch";
+import { FixedSizeList as List } from "react-window";
 
 export function DropdownOptions({
   options,
@@ -12,10 +13,42 @@ export function DropdownOptions({
   onSearchChange,
   searchInputRef,
 }) {
+  
   const handleClick = (e, option) => {
     e.stopPropagation();
     onToggleOption(option);
   };
+
+  const Row = ({ index, style }) => {
+    const option = options[index];
+    if(!option) return;
+    const isSelected = selectedOptions.includes(option);
+
+    return (
+      <div
+        key={index}
+        className={`flex gap-4 relative cursor-pointer select-none items-center justify-start py-3 px-4 text-sm hover:bg-secondary ${
+          isSelected ? "bg-secondary" : ""
+        }`}
+        onClick={(e) => handleClick(e, option)}
+        role="option"
+        aria-selected={isSelected}
+        style={style} 
+      >
+        <input
+          type="checkbox"
+          checked={isSelected}
+          className="h-3.5 w-3.5"
+          aria-label={`Select ${option}`}
+          onChange={(e) => handleClick(e, option)}
+          key={index}
+        />
+        <span>{option}</span>
+      </div>
+    );
+  };
+  console.log("DropdownOptions");
+  
   return (
     <>
       <div className="flex justify-between relative items-center py-2.5 px-4 text-sm bg-secondary">
@@ -45,27 +78,14 @@ export function DropdownOptions({
             No options found
           </div>
         ) : (
-          options.map((option) => (
-            <div
-              key={option}
-              className={`flex gap-4 relative cursor-pointer select-none items-center justify-start  py-3 px-4 text-sm hover:bg-secondary ${
-                selectedOptions.includes(option) ? "bg-secondary" : ""
-              }`}
-              onClick={(e) => handleClick(e, option)}
-              role="option"
-              aria-selected={selectedOptions.includes(option)}
-            >
-              <input
-                type="checkbox"
-                checked={selectedOptions.includes(option)}
-                onChange={(e) => handleClick(e, option)}
-                className="h-3.5 w-3.5"
-                aria-label={`Select ${option}`}
-                onClick={(e) => e.stopPropagation()}
-              />
-              <span>{option}</span>
-            </div>
-          ))
+          <List
+            height={200} 
+            itemCount={options.length} 
+            itemSize={40} 
+            width="100%" 
+          >
+            {Row}
+          </List>
         )}
       </div>
     </>

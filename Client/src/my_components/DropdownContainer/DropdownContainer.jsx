@@ -1,31 +1,30 @@
 import { memo } from "react";
 import PropTypes from "prop-types";
 import SelectDropdown from "./SelectDropdown/SelectDropdown";
+import { useDropdownManager } from "@/hooks/Dropdown/useDropdownManager";
 
-export const DropdownContainer = memo(function DropdownContainer({ 
-  name, 
-  options, 
-  isOpen, 
-  onToggle,
+export const DropdownContainer = memo(function DropdownContainer({
+  name,
+  options,
   onSelectionChange,
   selectedOptions,
-  allSelectedValues,
   setSelectedValues
 }) {
+  const { openDropdown, handleDropdownToggle } = useDropdownManager();
+  console.log("DropdownContainer");
   return (
-    <div 
-      className="dropdown-container w-full"
+    <div
+      className="dropdown-container w-full motion-blur-in-md motion-duration-[2s] motion-opacity-in-0 z-50 "
       role="region"
       aria-label={`${name} dropdown section`}
     >
       <SelectDropdown
         name={name}
         options={options}
-        isOpen={isOpen}
-        onToggle={onToggle}
+        isOpen={openDropdown}
+        onToggle={handleDropdownToggle}
         onSelectionChange={onSelectionChange}
         selectedOptions={selectedOptions}
-        allSelectedValues={allSelectedValues}
         setSelectedValues={setSelectedValues}
       />
     </div>
@@ -35,11 +34,9 @@ export const DropdownContainer = memo(function DropdownContainer({
 DropdownContainer.propTypes = {
   name: PropTypes.string.isRequired,
   options: PropTypes.arrayOf(PropTypes.string).isRequired,
-  isOpen: PropTypes.bool.isRequired,
-  onToggle: PropTypes.func.isRequired,
   dependencies: PropTypes.object,
   onSelectionChange: PropTypes.func.isRequired,
   selectedOptions: PropTypes.arrayOf(PropTypes.string).isRequired,
   allSelectedValues: PropTypes.object.isRequired,
-  setSelectedValues: PropTypes.func.isRequired
+  setSelectedValues: PropTypes.func.isRequired,
 };

@@ -11,12 +11,10 @@ const SelectDropdown = memo(function SelectDropdown({
   onToggle,
   onSelectionChange,
   selectedOptions,
-  allSelectedValues,
   setSelectedValues
 }) {
   const triggerRef = useRef(null);
   const searchInputRef = useRef(null);
-  const [dropdownWidth, setDropdownWidth] = useState("auto");
 
   const {
     searchTerm,
@@ -25,15 +23,12 @@ const SelectDropdown = memo(function SelectDropdown({
     toggleOption,
     handleSearchChange,
     filteredOptions,
-  } = useSelectDropdown(options, name, selectedOptions, onSelectionChange, allSelectedValues, setSelectedValues);
+  } = useSelectDropdown(options, name, selectedOptions, onSelectionChange);
 
   useEffect(() => {
     if (isOpen) {
       if (searchInputRef.current) {
         searchInputRef.current.focus();
-      }
-      if (triggerRef.current) {
-        setDropdownWidth(`${triggerRef.current.offsetWidth}px`);
       }
     }
   }, [isOpen]);
@@ -42,6 +37,8 @@ const SelectDropdown = memo(function SelectDropdown({
     e.stopPropagation();
     onToggle();
   }, [onToggle]);
+  console.log("SelectDropdown");
+
   return (
     <div className="relative">
       <DropdownTrigger
@@ -54,14 +51,13 @@ const SelectDropdown = memo(function SelectDropdown({
 
       {isOpen && (
         <div
-          className="absolute bg-card shadow rounded-md mt-1 z-50 max-h-96 overflow-hidden text-card-foreground whitespace-nowrap max-w-screen-sm"
-          style={{ maxWidth: dropdownWidth, minWidth: dropdownWidth }}
+          className="absolute bg-card shadow rounded-md mt-1 z-50 max-h-96 overflow-hidden text-card-foreground whitespace-nowrap min-w-screen-md max-w-full min-w-full"
           role="listbox"
           id="dropdown-list"
         >
           <div className="w-full">
             <DropdownOptions
-              options={filteredOptions.length > 0 ? filteredOptions : options }
+              options={filteredOptions == null ? options : filteredOptions }
               selectedOptions={selectedOptions}
               onToggleOption={toggleOption}
               name={name}
