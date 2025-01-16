@@ -30,7 +30,6 @@ export const dataService = {
 
   insertDataBatch: async (dataBatch) => {
     try {
-
       return await dataDb.insertBatch(
         dataBatch
       );

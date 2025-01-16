@@ -5,10 +5,10 @@ export const ParseData = async (req, res) => {
   const processedData = processData();
   const batchSize = 100;
 
-  for (let i = 0; i < processedData.length; i += batchSize) {
-    const batch = processedData.slice(i, i + batchSize);
-    await dataService.insertDataBatch(batch);
-  }
+    for (let i = 0; i < processedData.length; i += batchSize) {
+      const batch = processedData.slice(i, i + batchSize);
+      await dataService.insertDataBatch(batch);
+    }
 
   res.status(201).json({
     totalInserted: processedData.length,

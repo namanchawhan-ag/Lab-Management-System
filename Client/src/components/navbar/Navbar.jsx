@@ -1,7 +1,7 @@
 function Navbar() {
   return (
     <>
-    <nav className="py-1.5 px-4 md:px-12 lg:px-20 flex text-xl justify-between items-center border-b">
+    <nav className="py-1.5 px-4 flex text-xl justify-between items-center border-b">
       <h1 className="font-semibold text-accent-foreground">Lab Management System</h1>
       <div className="flex gap-4 items-center">
         <div className="flex flex-col">

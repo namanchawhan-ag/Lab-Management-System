@@ -1,39 +1,48 @@
 import { useState, useCallback, useMemo } from "react";
 
-export function useSelectDropdown(
-  options,
-  name,
-  selectedOptions,
-  onSelectionChange
-) {
+export function useSelectDropdown(options, name, setSelectedOptions) {
   const [searchTerm, setSearchTerm] = useState("");
 
+  const selectedOptions = JSON.parse(sessionStorage.getItem(name)) || [];
   const isAllSelected =
-    selectedOptions.length === options?.length && options?.length > 0;
+    Array.isArray(selectedOptions) &&
+    Array.isArray(options) &&
+    selectedOptions.length === options?.length &&
+    options.length > 0;
 
   const toggleSelectAll = useCallback(async () => {
-    const newSelection = isAllSelected ? [] : [...options];
-
-    onSelectionChange(newSelection);
-  }, [options, isAllSelected]);
+    const newSelection = isAllSelected ? [] : [...(options || [])];
+    sessionStorage.setItem(name, JSON.stringify(newSelection));
+    setSelectedOptions(newSelection);
+  }, [options, isAllSelected, name]);
 
   const toggleOption = useCallback(
-    async (option) => {
-      const isSelected = selectedOptions.includes(option);
-      const newSelection = isSelected
-        ? selectedOptions.filter((item) => item !== option)
-        : [...selectedOptions, option];
+    async (option, checked) => {
+      const currentSelection = JSON.parse(sessionStorage.getItem(name)) || [];
+      const newSelection = !checked
+        ? currentSelection.filter((item) => item !== option)
+        : [...currentSelection, option];
 
-      onSelectionChange(newSelection);
+      sessionStorage.setItem(name, JSON.stringify(newSelection));
+      setSelectedOptions(newSelection);
     },
-    [selectedOptions]
+    [name]
   );
 
   const filteredOptions = useMemo(() => {
     if (!searchTerm) return null;
-
-    return options.filter((option) =>
-      option.toLowerCase().includes(searchTerm.toLowerCase().trim())
+    const normalizedSearchTerm = searchTerm
+      ?.toLowerCase()
+      .trim()
+      .replace(/\s+/g, " ");
+    return (
+      options?.filter((option) =>
+        option
+          ?.toLowerCase()
+          .trim()
+          .replace(/\s+/g, " ")
+          .includes(normalizedSearchTerm)
+      ) || []
     );
   }, [searchTerm, options]);
 

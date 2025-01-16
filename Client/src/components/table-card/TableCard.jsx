@@ -33,16 +33,16 @@ export function TableCard({ entries }) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[250px]">Lab Name</TableHead>
+            <TableHead className="w-[300px]">Lab Name</TableHead>
             {uniqueCategories.map((category) => (
-              <TableHead key={category} className="w-[150px]">
+              <TableHead key={category} className="w-[200px]">
                 <TooltipProvider delayDuration={200}>
                   <Tooltip>
-                    <TooltipTrigger className="">
-                      {category?.slice(0, 15)}...
+                    <TooltipTrigger className="line-clamp-1">
+                      {category}
                     </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{category}</p>
+                    <TooltipContent className="grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl text-muted-foreground">
+                      {category}
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -53,7 +53,7 @@ export function TableCard({ entries }) {
         <TableBody>
           {entries.map((entry) => (
             <TableRow key={entry.lab_name}>
-              <TableCell className="font-medium w-[250px]">
+              <TableCell className="font-medium w-[300px]">
                 {entry.lab_name}
               </TableCell>
               {uniqueCategories.map((category) => {
@@ -63,7 +63,7 @@ export function TableCard({ entries }) {
                 return (
                   <TableCell
                     key={`${entry.lab_name}-${category}`}
-                    className="bg-muted mx-1 rounded hover:cursor-pointer hover:bg-card hover:text-card-foreground w-[142px]"
+                    className="bg-muted m-1 rounded hover:cursor-pointer hover:bg-card hover:text-card-foreground w-[192px]"
                   >
                     <span className="text-muted-foreground ml-1">
                       {foundCategory ? foundCategory.entry_count : "-"}
@@ -82,3 +82,5 @@ export function TableCard({ entries }) {
 TableCard.propTypes = {
   entries: PropTypes.array.isRequired,
 };
+
+export default TableCard;

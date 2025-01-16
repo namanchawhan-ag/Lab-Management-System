@@ -92,8 +92,8 @@ export const dataDb = {
         (SELECT COUNT(*) FROM lab_data) AS total_entries,
         (SELECT COUNT(DISTINCT main_food_category) FROM lab_data) AS total_food_categories,
         (SELECT COUNT(DISTINCT test_sub_category) FROM lab_data) AS total_test_categories,
-        (SELECT json_agg(json_build_object('lab_name', lab_name, 'entry_count', entry_count)) FROM lab_grouped_data) AS lab_grouped,
-        (SELECT json_agg(json_build_object('test_sub_category', test_sub_category, 'entry_count', entry_count)) FROM test_grouped_data) AS test_grouped;
+        (SELECT json_agg(json_build_object('name', lab_name, 'entry_count', entry_count)) FROM lab_grouped_data) AS lab_grouped,
+        (SELECT json_agg(json_build_object('name', test_sub_category, 'entry_count', entry_count)) FROM test_grouped_data) AS test_grouped;
       `,
       crossTab: `
       SELECT 
@@ -138,7 +138,7 @@ export const dataDb = {
       uniqueCategories: uniqueCategories.rows[0],
     };
   },
-
+  
   getFilteredDashboardStats: async (filters) => {
     const { lab_name, main_food_category, test_sub_category } = filters;
 
@@ -192,32 +192,9 @@ export const dataDb = {
         (SELECT COUNT(*) FROM lab_data ${whereClause}) AS total_entries,
         (SELECT COUNT(DISTINCT main_food_category) FROM lab_data ${whereClause}) AS total_food_categories,
         (SELECT COUNT(DISTINCT test_sub_category) FROM lab_data ${whereClause}) AS total_test_categories,
-        (SELECT json_agg(json_build_object('lab_name', lab_name, 'entry_count', entry_count)) FROM lab_grouped_data) AS lab_grouped,
-        (SELECT json_agg(json_build_object('test_sub_category', test_sub_category, 'entry_count', entry_count)) FROM test_grouped_data) AS test_grouped;
+        (SELECT json_agg(json_build_object('name', lab_name, 'entry_count', entry_count)) FROM lab_grouped_data) AS lab_grouped,
+        (SELECT json_agg(json_build_object('name', test_sub_category, 'entry_count', entry_count)) FROM test_grouped_data) AS test_grouped;
       `,
-      // totalCounts: `
-      //   SELECT
-      //     COUNT(DISTINCT lab_name) as total_labs,
-      //     COUNT(*) as total_entries,
-      //     COUNT(DISTINCT main_food_category) as total_food_categories,
-      //     COUNT(DISTINCT test_sub_category) as total_test_categories
-      //   FROM lab_data
-      //   ${whereClause}
-      // `,
-      // labGrouped: `
-      //   SELECT lab_name, COUNT(*) as entry_count
-      //   FROM lab_data
-      //   ${whereClause}
-      //   GROUP BY lab_name
-      //   ORDER BY lab_name
-      // `,
-      // testGrouped: `
-      //   SELECT test_sub_category, COUNT(*) as entry_count
-      //   FROM lab_data
-      //   ${whereClause}
-      //   GROUP BY test_sub_category
-      //   ORDER BY test_sub_category
-      // `,
       crossTab: `
         SELECT 
         lab_name,
