@@ -1,5 +1,5 @@
 import { memo } from "react";
-
+import PropTypes from "prop-types";
 const GridContainer = memo(function GridContainer({ name, value }) {
   return (
     <>
@@ -10,5 +10,10 @@ const GridContainer = memo(function GridContainer({ name, value }) {
     </>
   );
 });
+
+GridContainer.propTypes = {
+  name: PropTypes.string,
+  value: PropTypes.string,
+};
 
 export default GridContainer;

@@ -1,10 +1,14 @@
+import { memo, useCallback } from "react";
 import PropTypes from "prop-types";
 import SelectDropdown from "./select-dropdown/SelectDropdown";
 import { useDropdownManager } from "@/hooks/Dropdown/useDropdownManager";
 
-function DropdownContainer({ name, options }) {
+const DropdownContainer = memo(function DropdownContainer({ name, options }) {
   const { openDropdown, handleDropdownToggle } = useDropdownManager();
-  console.log("DropdownContainer");
+
+  const handleToggle = useCallback(() => {
+    handleDropdownToggle();
+  }, [handleDropdownToggle]);
   
   return (
     <div
@@ -16,11 +20,11 @@ function DropdownContainer({ name, options }) {
         name={name}
         options={options}
         isOpen={openDropdown}
-        onToggle={handleDropdownToggle}
+        onToggle={handleToggle}
       />
     </div>
   );
-}
+});
 
 DropdownContainer.propTypes = {
   name: PropTypes.string.isRequired,

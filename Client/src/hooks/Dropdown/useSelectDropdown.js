@@ -14,7 +14,7 @@ export function useSelectDropdown(options, name, setSelectedOptions) {
     const newSelection = isAllSelected ? [] : [...(options || [])];
     sessionStorage.setItem(name, JSON.stringify(newSelection));
     setSelectedOptions(newSelection);
-  }, [options, isAllSelected, name]);
+  }, [options, isAllSelected, name, setSelectedOptions]);
 
   const toggleOption = useCallback(
     async (option, checked) => {
@@ -26,7 +26,7 @@ export function useSelectDropdown(options, name, setSelectedOptions) {
       sessionStorage.setItem(name, JSON.stringify(newSelection));
       setSelectedOptions(newSelection);
     },
-    [name]
+    [name, setSelectedOptions]
   );
 
   const filteredOptions = useMemo(() => {

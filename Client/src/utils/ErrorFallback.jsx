@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 export function ErrorFallback({ error, resetErrorBoundary }) {
   return (
     <div>
@@ -7,3 +9,8 @@ export function ErrorFallback({ error, resetErrorBoundary }) {
     </div>
   );
 }
+
+ErrorFallback.propTypes = {
+  error: PropTypes.object,
+  resetErrorBoundary: PropTypes.func,
+};

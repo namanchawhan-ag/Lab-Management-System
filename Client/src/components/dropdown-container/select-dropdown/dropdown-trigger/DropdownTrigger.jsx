@@ -1,18 +1,34 @@
 import PropTypes from 'prop-types';
+import { memo, useMemo } from 'react';
 
-export function DropdownTrigger({ name, onClick, isOpen, triggerRef }) {
+const DropdownTrigger = memo(function DropdownTrigger({ 
+  name, 
+  onClick, 
+  isOpen, 
+  triggerRef 
+}) {
   const selectedOptions = JSON.parse(sessionStorage.getItem(name));
   const selectedCount = selectedOptions?.length;
-  console.log("DropdownTrigger");
+
+  const buttonClasses = useMemo(() => (
+    "flex h-9 w-full items-center justify-between whitespace-nowrap rounded-xl " +
+    "border bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background " +
+    "placeholder:text-muted-foreground focus:outline-none focus:ring-1 " +
+    "focus:ring-card focus:ring-offset-2 hover:bg-secondary"
+  ), []);
+
+  const ariaProps = useMemo(() => ({
+    'aria-expanded': isOpen,
+    'aria-haspopup': "listbox",
+    'aria-controls': isOpen ? "dropdown-list" : undefined
+  }), [isOpen]);
 
   return (
     <button
       ref={triggerRef}
-      className="flex h-9 w-full items-center justify-between whitespace-nowrap rounded-xl border bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-card focus:ring-offset-2 hover:bg-secondary"
+      className={buttonClasses}
       onClick={onClick}
-      aria-expanded={isOpen}
-      aria-haspopup="listbox"
-      aria-controls={isOpen ? "dropdown-list" : undefined}
+      {...ariaProps}
     >
       <span className='font-medium'>{name}</span>
       {selectedCount > 0 && (
@@ -22,11 +38,13 @@ export function DropdownTrigger({ name, onClick, isOpen, triggerRef }) {
       )}
     </button>
   );
-}
+});
 
 DropdownTrigger.propTypes = {
   name: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
   triggerRef: PropTypes.object.isRequired,
-}; 
+};
+
+export { DropdownTrigger }; 

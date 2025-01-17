@@ -1,8 +1,6 @@
-import { useMemo } from "react";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -29,7 +27,15 @@ export function TableCard({ entries }) {
     return <div>No data available</div>;
   }
   return (
-    <div className="">
+    <div className="rounded-xl border text-card-foreground shadow p-4">
+      <div className="p-2 space-y-1.5 flex flex-col mb-4">
+        <div className="font-semibold leading-none tracking-tight">
+          Lab Table
+        </div>
+        <div className="text-sm text-muted-foreground">
+          Main Food Categories
+        </div>
+      </div>
       <Table>
         <TableHeader>
           <TableRow>

@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import {
   Bar,
   BarChart,
@@ -24,7 +23,7 @@ import {
 import { colors } from "@/lib/colors";
 
 const BarChartCard = ({ entries, lab = false }) => {
-  const generateConfig = (data) => {
+  const generateConfig = () => {
     const config = {};
     // data.forEach((entry, index) => {
     //   const key = `lab${index}`;

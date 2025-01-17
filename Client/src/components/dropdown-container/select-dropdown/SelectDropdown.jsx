@@ -10,7 +10,10 @@ const SelectDropdown = memo(function SelectDropdown({
   isOpen, 
   onToggle,
 }) {
-  const [selectedOptions, setSelectedOptions] = useState(JSON.parse(sessionStorage.getItem(name)));
+  const [selectedOptions, setSelectedOptions] = useState(
+    JSON.parse(sessionStorage.getItem(name))
+  );
+  
   const triggerRef = useRef(null);
   const searchInputRef = useRef(null);
 
@@ -24,10 +27,8 @@ const SelectDropdown = memo(function SelectDropdown({
   } = useSelectDropdown(options, name, setSelectedOptions);
 
   useEffect(() => {
-    if (isOpen) {
-      if (searchInputRef.current) {
-        searchInputRef.current.focus();
-      }
+    if (isOpen && searchInputRef.current) {
+      searchInputRef.current.focus();
     }
   }, [isOpen]);
 
@@ -35,10 +36,9 @@ const SelectDropdown = memo(function SelectDropdown({
     e.stopPropagation();
     onToggle();
   }, [onToggle]);
-  console.log("SelectDropdown");
 
   return (
-    <div className="relative ">
+    <div className="relative">
       <DropdownTrigger
         name={name}
         onClick={handleTriggerClick}
@@ -48,13 +48,13 @@ const SelectDropdown = memo(function SelectDropdown({
 
       {isOpen && (
         <div
-          className="absolute bg-card shadow rounded-md mt-1 z-50 overflow-hidden text-card-foreground  min-w-full"
+          className="absolute bg-card shadow rounded-md mt-1 z-50 overflow-hidden text-card-foreground min-w-full"
           role="listbox"
           id="dropdown-list"
         >
           <div className="w-full">
             <DropdownOptions
-              options={filteredOptions == null ? options : filteredOptions }
+              options={filteredOptions == null ? options : filteredOptions}
               onToggleOption={toggleOption}
               name={name}
               isAllSelected={isAllSelected}

@@ -1,8 +1,9 @@
 import PropTypes from "prop-types";
-import { useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { DropdownSearch } from "./dropdown-search/DropdownSearch";
+import DropdownRow from "./dropdown-row/DropdownRow";
 
-export function DropdownOptions({
+const DropdownOptions = memo(function DropdownOptions({
   options,
   onToggleOption,
   name,
@@ -14,77 +15,75 @@ export function DropdownOptions({
   selectedOptions = [],
   setSelectedOptions,
 }) {
-  const handleClick = (e, option) => {
-    e.stopPropagation();
-    const isCurrentlySelected =
-      Array.isArray(selectedOptions) && selectedOptions.includes(option);
-    onToggleOption(option, !isCurrentlySelected);
-  };
-
-  const onRemoveFilters = () => {
+  const onRemoveFilters = useCallback(() => {
     sessionStorage.removeItem(name);
     setSelectedOptions([]);
-  };
+  }, [name, setSelectedOptions]);
+
+  const handleToggleAll = useCallback(
+    (e) => {
+      e.stopPropagation();
+      onToggleAll();
+    },
+    [onToggleAll]
+  );
+
+  const buttonClasses = useMemo(
+    () => ({
+      base: "hover:opacity-90 py-2.5 flex-1 text-center",
+      toggleAll: `${
+        isAllSelected
+          ? "bg-primary text-primary-foreground hover:opacity-90"
+          : "hover:bg-primary hover:text-primary-foreground"
+      } border-r`,
+      removeFilters: "hover:bg-primary hover:text-primary-foreground",
+    }),
+    [isAllSelected]
+  );
 
   const sortedOptions = useMemo(() => {
-    return [...options].sort((a, b) => {
-      const aSelected = selectedOptions?.includes(a);
-      const bSelected = selectedOptions?.includes(b);
-      if (aSelected && !bSelected) return -1;
-      if (!aSelected && bSelected) return 1;
-      return 0;
-    });
+    const selected = options.filter((option) =>
+      selectedOptions?.includes(option)
+    );
+    const unselected = options.filter(
+      (option) => !selectedOptions?.includes(option)
+    );
+    return [...selected, ...unselected];
   }, [options, selectedOptions]);
 
-  const Row = ({ index, option }) => {
-    if (!option) return null;
-
-    const isSelected =
-      Array.isArray(selectedOptions) && selectedOptions.includes(option);
-
-    return (
-      <div
-        key={index}
-        className={`w-full cursor-pointer select-none items-center justify-start py-3 px-4 text-sm rounded ${
-          isSelected
-            ? "bg-primary text-primary-foreground hover:opacity-90"
-            : "hover:bg-primary text-muted-foreground hover:text-primary-foreground"
-        }`}
-        role="option"
-        onClick={(e) => handleClick(e, option)}
-      >
-        {option}
-      </div>
-    );
-  };
+  const optionsList = useMemo(
+    () =>
+      sortedOptions.map((option, index) => (
+        <DropdownRow
+          key={`${option}-${index}`}
+          index={index}
+          option={option}
+          selectedOptions={selectedOptions}
+          onToggleOption={onToggleOption}
+        />
+      )),
+    [sortedOptions, selectedOptions, onToggleOption]
+  );
 
   return (
     <>
-      <div
-        className={`flex cursor-pointer relative items-center text-sm rounded `}
-      >
-        <div
-          className={`hover:opacity-90 py-2.5 flex-1 text-center border-r ${
-            isAllSelected
-              ? "bg-primary text-primary-foreground hover:opacity-90"
-              : "hover:bg-primary hover:text-primary-foreground "
-          }`}
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleAll();
-          }}
+      <div className="flex cursor-pointer relative items-center text-sm rounded">
+        <button
+          className={`${buttonClasses.base} ${buttonClasses.toggleAll}`}
+          onClick={handleToggleAll}
         >
           <span className="font-semibold">
             {isAllSelected ? "Unselect All" : "Select All"}
           </span>
-        </div>
-        <div
-          className={`hover:opacity-90 py-2.5  flex-1 text-center hover:bg-primary hover:text-primary-foreground `}
+        </button>
+        <button
+          className={`${buttonClasses.base} ${buttonClasses.removeFilters}`}
           onClick={onRemoveFilters}
         >
           <span className="font-semibold">Remove Filters</span>
-        </div>
+        </button>
       </div>
+
       <DropdownSearch
         searchTerm={searchTerm}
         onSearchChange={onSearchChange}
@@ -97,16 +96,12 @@ export function DropdownOptions({
             No options found
           </div>
         ) : (
-          <div className="flex flex-col">
-            {sortedOptions.map((option, index) => (
-              <Row key={index} option={option} />
-            ))}
-          </div>
+          <div className="flex flex-col">{optionsList}</div>
         )}
       </div>
     </>
   );
-}
+});
 
 DropdownOptions.propTypes = {
   options: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -118,4 +113,7 @@ DropdownOptions.propTypes = {
   searchTerm: PropTypes.string.isRequired,
   onSearchChange: PropTypes.func.isRequired,
   searchInputRef: PropTypes.object.isRequired,
+  setSelectedOptions: PropTypes.func.isRequired,
 };
+
+export { DropdownOptions };

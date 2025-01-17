@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 function Error({ error }) {
   return (
     <div className="text-red-600">
@@ -11,5 +13,9 @@ function Error({ error }) {
     </div>
   );
 }
+
+Error.propTypes = {
+  error: PropTypes.object,
+};
 
 export default Error;

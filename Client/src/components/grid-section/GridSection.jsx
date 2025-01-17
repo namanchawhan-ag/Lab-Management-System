@@ -1,7 +1,8 @@
 import GridContainer from "@/components/grid-container/GridContainer";
 import PropTypes from "prop-types";
+import { memo } from "react";
 
-export function GridSection({ gridItems }) {
+const GridSection = memo(function GridSection({ gridItems }) {
   return (
     <div className="grid grid-cols-4 gap-4">
       {gridItems.map((item) => (
@@ -9,7 +10,7 @@ export function GridSection({ gridItems }) {
       ))}
     </div>
   );
-}
+});
 
 GridSection.propTypes = {
   gridItems: PropTypes.arrayOf(
@@ -20,3 +21,5 @@ GridSection.propTypes = {
     })
   ),
 };
+
+export default GridSection;

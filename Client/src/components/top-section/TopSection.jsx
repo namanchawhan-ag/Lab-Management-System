@@ -2,46 +2,26 @@ import { Suspense, lazy } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import PropTypes from "prop-types";
-import { postLabData } from "@/services/data.service";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useToast } from "@/hooks/use-toast";
 import { useLabData } from "@/hooks/Data/useLabData";
+import createRequestBody from "@/lib/createRequestBody";
+import { memo } from "react";
 
 const LazyDropdownContainer = lazy(() =>
   import("@/components/dropdown-container/DropdownContainer")
 );
 
-export function TopSection({ dropdownOptions, setIsLoading }) {
+const TopSection = memo(function TopSection({ dropdownOptions, setIsFetchingFilteredData }) {
   const mutation = useLabData().mutation;
 
-  const createRequestBody = () => {
-    const requestBody = {};
-
-    if (sessionStorage.getItem("Lab Name") != null) {
-      requestBody.lab_name = JSON.parse(sessionStorage.getItem("Lab Name"));
-    }
-    if (sessionStorage.getItem("Main Food Category") != null) {
-      requestBody.main_food_category = JSON.parse(
-        sessionStorage.getItem("Main Food Category")
-      );
-    }
-    if (sessionStorage.getItem("Test Sub Category") != null) {
-      requestBody.test_sub_category = JSON.parse(
-        sessionStorage.getItem("Test Sub Category")
-      );
-    }
-
-    return requestBody;
-  };
-
   const handleSearch = async () => {
-    setIsLoading(true);
+    setIsFetchingFilteredData(true);
     const requestBody = createRequestBody();
     try {
       await mutation.mutateAsync(requestBody);
-      setIsLoading(false);
+      setIsFetchingFilteredData(false);
     } catch (error) {
-      console.error("Error updating data:", error);
+      console.error("Error fetching filtered data:", error);
+      setIsFetchingFilteredData(false);
     }
   };
 
@@ -67,8 +47,11 @@ export function TopSection({ dropdownOptions, setIsLoading }) {
       </Button>
     </div>
   );
-}
+});
 
 TopSection.propTypes = {
   dropdownOptions: PropTypes.array,
+  setIsFetchingFilteredData: PropTypes.func,
 };
+
+export default TopSection;
