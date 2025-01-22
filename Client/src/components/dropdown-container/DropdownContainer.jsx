@@ -1,7 +1,7 @@
 import { memo, useCallback } from "react";
 import PropTypes from "prop-types";
 import SelectDropdown from "./select-dropdown/SelectDropdown";
-import { useDropdownManager } from "@/hooks/Dropdown/useDropdownManager";
+import { useDropdownManager } from "@/hooks/dropdown/useDropdownManager";
 
 const DropdownContainer = memo(function DropdownContainer({ name, options }) {
   const { openDropdown, handleDropdownToggle } = useDropdownManager();

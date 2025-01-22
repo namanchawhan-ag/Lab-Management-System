@@ -1,7 +1,7 @@
 import { useRef, useEffect, memo, useCallback, useState } from "react";
 import PropTypes from "prop-types";
 import { DropdownTrigger } from "./dropdown-trigger/DropdownTrigger";
-import { useSelectDropdown } from "@/hooks/Dropdown/useSelectDropdown";
+import { useSelectDropdown } from "@/hooks/dropdown/useSelectDropdown";
 import { DropdownOptions } from "./dropdown-options/DropdownOptions";
 
 const SelectDropdown = memo(function SelectDropdown({ 
@@ -48,7 +48,7 @@ const SelectDropdown = memo(function SelectDropdown({
 
       {isOpen && (
         <div
-          className="absolute bg-card shadow rounded-md mt-1 z-50 overflow-hidden text-card-foreground min-w-full"
+          className="absolute bg-card rounded-md mt-1 z-50 overflow-hidden text-card-foreground min-w-full border"
           role="listbox"
           id="dropdown-list"
         >

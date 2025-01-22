@@ -25,9 +25,12 @@ function processData() {
   const jsonData = xlsx.utils.sheet_to_json(sheet);
 
   const processedData = jsonData.map((row) => ({
-    lab_name: row["Lab Name"],
-    main_food_category: row["Main Food Category"],
+    main_food_category: row["Main Food Category "],
+    sub_category: row["Sub-category"],
+    product: row["Product"],
+    test_category: row["Test category"],
     test_sub_category: row["Test Sub category"],
+    parameter: row["Parameter"],
   }));
 
   return processedData;

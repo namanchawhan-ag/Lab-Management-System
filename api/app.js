@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import middleware from "./utils/middleware.js";
 import { dataRouter } from "./routes/data.route.js";
+import { authRouter } from "./routes/auth.route.js";
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.get("/test", (req, res) => {
   res.send("Route is working");
 });
 app.use("/data", dataRouter);
+app.use("/auth", authRouter);
 
 app.use(middleware.errorHandlerMiddleware);
 

@@ -27,7 +27,7 @@ export function TableCard({ entries }) {
     return <div>No data available</div>;
   }
   return (
-    <div className="rounded-xl border text-card-foreground shadow p-4">
+    <div className="rounded-xl border text-card-foreground shadow p-4 bg-background">
       <div className="p-2 space-y-1.5 flex flex-col mb-4">
         <div className="font-semibold leading-none tracking-tight">
           Lab Table

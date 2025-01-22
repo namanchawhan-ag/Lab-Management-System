@@ -1,5 +1,5 @@
 import { dataDb } from "../db/data.db.js";
-import { errorHandler } from "../utils/error.js";
+import { errorHandler } from "../helpers/error.js";
 
 export const dataService = {
   insertData: async (data) => {
@@ -11,10 +11,6 @@ export const dataService = {
         limit_standard_specification,
         range_of_testing,
       } = data;
-
-      // if (!lab_name) {
-      //   throw errorHandler(400, "Missing required fields");
-      // }
 
       return await dataDb.insert(
         lab_name,

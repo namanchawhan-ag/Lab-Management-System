@@ -20,7 +20,7 @@ const DashboardSkeleton = () => {
 
   const containerClasses = useMemo(
     () => ({
-      main: "mb-2",
+      main: "mb-2 py-2 px-4",
       topRow: "flex gap-2 mb-2",
       middleRow: "flex gap-2 mb-2",
     }),

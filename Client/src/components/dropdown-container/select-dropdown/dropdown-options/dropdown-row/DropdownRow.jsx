@@ -48,7 +48,7 @@ const DropdownRow = memo(function DropdownRow({
 
 DropdownRow.propTypes = {
   index: PropTypes.number.isRequired,
-  option: PropTypes.string.isRequired,
+  option: PropTypes.string,
   selectedOptions: PropTypes.arrayOf(PropTypes.string),
   onToggleOption: PropTypes.func.isRequired,
 };

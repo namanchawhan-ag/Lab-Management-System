@@ -25,12 +25,6 @@ import { colors } from "@/lib/colors";
 const BarChartCard = ({ entries, lab = false }) => {
   const generateConfig = () => {
     const config = {};
-    // data.forEach((entry, index) => {
-    //   const key = `lab${index}`;
-    //   config[key] = {{
-    //     color: colors[index % colors.length],
-    //   };
-    // });
     return config;
   };
 

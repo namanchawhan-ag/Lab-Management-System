@@ -27,34 +27,44 @@ export const dataDb = {
 
   insertBatch: async (dataBatch) => {
     try {
-      const custom_lab_name = "Food Contaminants";
-      const custom_test_sub_category = "furan";
+      const custom_lab_name = "Geochem Laboratories Private Limited";
 
       const insertQuery = `
         INSERT INTO lab_data (
           lab_name,
           main_food_category,
-          test_sub_category
+          sub_category,
+          product,
+          test_category,
+          test_sub_category,
+          parameter
         )
         VALUES ${dataBatch
           .map(
             (_, i) =>
-              `($${i * 3 + 1}, $${i * 3 + 2}, $${i * 3 + 3})`
+              `($1, $${i * 6 + 2}, $${i * 6 + 3}, $${i * 6 + 4}, $${i * 6 + 5}, $${i * 6 + 6}, $${i * 6 + 7})`
           )
           .join(", ")}
         RETURNING *`;
 
-      const values = dataBatch.flatMap(
-        ({
-          lab_name,
+      const values = [
+        custom_lab_name,
+        ...dataBatch.flatMap(({
           main_food_category,
+          sub_category,
+          product,
+          test_category,
           test_sub_category,
+          parameter
         }) => [
-          lab_name,
           main_food_category,
+          sub_category,
+          product,
+          test_category,
           test_sub_category,
-        ]
-      );
+          parameter
+        ])
+      ];
 
       const result = await pool.query(insertQuery, values);
       return result.rows;

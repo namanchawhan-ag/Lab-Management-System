@@ -8,7 +8,8 @@ const config = {
   POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD,
   POSTGRES_DATABASE: process.env.POSTGRES_DATABASE || 'postgres',
   POSTGRES_DB_PORT: parseInt(process.env.POSTGRES_DB_PORT || '5432'),
-  PORT: parseInt(process.env.PORT || '3001')
+  PORT: parseInt(process.env.PORT || '3001'),
+  SECRET: process.env.SECRET
 };
 
 export default config;

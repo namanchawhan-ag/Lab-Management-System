@@ -6,7 +6,7 @@ import { useToast } from "../use-toast";
 export const useLabData = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  
+
   const { data, isPending, isError, error } = useQuery({
     queryKey: ["labData"],
     queryFn: () => getLabData(),
@@ -101,6 +101,6 @@ export const useLabData = () => {
     error,
     gridItems,
     dropdownOptions,
-    mutation
+    mutation,
   };
 };

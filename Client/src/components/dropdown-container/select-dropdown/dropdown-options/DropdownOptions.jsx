@@ -42,10 +42,10 @@ const DropdownOptions = memo(function DropdownOptions({
   );
 
   const sortedOptions = useMemo(() => {
-    const selected = options.filter((option) =>
+    const selected = options?.filter((option) =>
       selectedOptions?.includes(option)
     );
-    const unselected = options.filter(
+    const unselected = options?.filter(
       (option) => !selectedOptions?.includes(option)
     );
     return [...selected, ...unselected];
@@ -55,7 +55,7 @@ const DropdownOptions = memo(function DropdownOptions({
     () =>
       sortedOptions.map((option, index) => (
         <DropdownRow
-          key={`${option}-${index}`}
+          key={`${index}`}
           index={index}
           option={option}
           selectedOptions={selectedOptions}
@@ -104,7 +104,7 @@ const DropdownOptions = memo(function DropdownOptions({
 });
 
 DropdownOptions.propTypes = {
-  options: PropTypes.arrayOf(PropTypes.string).isRequired,
+  options: PropTypes.arrayOf(PropTypes.string),
   selectedOptions: PropTypes.arrayOf(PropTypes.string),
   onToggleOption: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
